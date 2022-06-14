@@ -1,0 +1,34 @@
+---
+- name: create tag
+  devopsarr.prowlarr.prowlarr_tag:
+    label: 'hello'
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: assert tag creation
+  assert:
+    that:
+      - result['label'] == 'hello'
+# ----------------------------------------------------------------------------
+- name: create already present tag
+  devopsarr.prowlarr.prowlarr_tag:
+    label: 'hello'
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: assert tag creation
+  assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: delete tag
+  devopsarr.prowlarr.prowlarr_tag:
+    label: 'hello'
+    state: 'absent'
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: assert tag deletion
+  assert:
+    that:
+      - result['id'] == 0
