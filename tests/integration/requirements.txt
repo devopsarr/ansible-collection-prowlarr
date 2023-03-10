@@ -1,1 +1,1 @@
-pyarr
+prowlarr-py

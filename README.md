@@ -1,7 +1,7 @@
 # Prowlarr Collection for Ansible
 [![CI](https://github.com/devopsarr/ansible-collection-prowlarr/workflows/CI/badge.svg?event=push)](https://github.com/devopsarr/ansible-collection-prowlarr/actions) [![Codecov](https://img.shields.io/codecov/c/github/devopsarr/ansible-collection-prowlarr)](https://codecov.io/gh/adevopsarr/ansible-collection-prowlarr)
 
-Ansible colletion for Prowlarr based on [pyarr SDK](https://github.com/totaldebug/pyarr)
+Ansible collection for Prowlarr based on [prowlarr-py SDK](https://github.com/devopsarr/prowlarr-py)
 ## Code of Conduct
 
 We follow the [Ansible Code of Conduct](https://docs.ansible.com/ansible/devel/community/code_of_conduct.html) in all our interactions within this project.

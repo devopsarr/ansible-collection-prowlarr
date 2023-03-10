@@ -5,41 +5,72 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 try:
-    from pyarr import ProwlarrAPI
-    HAS_PYARR_LIBRARIY = True
+    import prowlarr
+    HAS_PROWLARR_LIBRARY = True
 except ImportError:
-    HAS_PYARR_LIBRARIY = False
+    HAS_PROWLARR_LIBRARY = False
 
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 
 
 class ProwlarrModule(AnsibleModule):
-    def __init__(self, *args, **kwargs):
-        # self._validate()
-        arg_spec = kwargs.get('argument_spec', {})
+    def __init__(self, argument_spec, bypass_checks=False, no_log=False,
+                 mutually_exclusive=None, required_together=None,
+                 required_one_of=None, add_file_common_args=False,
+                 supports_check_mode=False, required_if=None):
 
-        kwargs['argument_spec'] = self._merge_dictionaries(
-            arg_spec,
+        argument_spec = self._merge_dictionaries(
+            argument_spec,
             dict(
                 prowlarr_url=dict(
                     required=True,
                     type='str',
-                    fallback=(env_fallback, ['SONARR_URL'])),
+                    fallback=(env_fallback, ['PROWLARR_URL'])),
                 prowlarr_api_key=dict(
                     required=True,
                     type='str',
-                    fallback=(env_fallback, ['SONARR_API_KEY']),
+                    fallback=(env_fallback, ['PROWLARR_API_KEY']),
                     no_log=True)
             )
         )
 
-        AnsibleModule.__init__(self, *args, **kwargs)
+        # manage python 2 with except
+        try:
+            super().__init__(
+                argument_spec,
+                bypass_checks=bypass_checks,
+                no_log=no_log,
+                mutually_exclusive=mutually_exclusive,
+                required_together=required_together,
+                required_one_of=required_one_of,
+                add_file_common_args=add_file_common_args,
+                supports_check_mode=supports_check_mode,
+                required_if=required_if,
+            )
+        except TypeError:
+            super(ProwlarrModule, self).__init__(
+                argument_spec,
+                bypass_checks=bypass_checks,
+                no_log=no_log,
+                mutually_exclusive=mutually_exclusive,
+                required_together=required_together,
+                required_one_of=required_one_of,
+                add_file_common_args=add_file_common_args,
+                supports_check_mode=supports_check_mode,
+                required_if=required_if,
+            )
 
-        self.api = ProwlarrAPI(self.params["prowlarr_url"], self.params["prowlarr_api_key"], "/v3")
+        self._validate()
+
+        configuration = prowlarr.Configuration(
+            host=self.params["prowlarr_url"]
+        )
+        configuration.api_key['X-Api-Key'] = self.params["prowlarr_api_key"]
+        self.api = prowlarr.ApiClient(configuration)
 
     def _validate(self):
-        if not HAS_PYARR_LIBRARIY:
-            self.fail_json(msg="Please install the pyarr library")
+        if not HAS_PROWLARR_LIBRARY:
+            self.fail_json(msg="Please install the prowlarr library")
 
     def _merge_dictionaries(self, a, b):
         new = a.copy()
