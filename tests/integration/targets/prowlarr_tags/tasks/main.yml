@@ -16,7 +16,7 @@
     prowlarr_api_key: "{{ prowlarr_api_key }}"
     prowlarr_url: "{{ prowlarr_url }}"
   register: result
-- name: assert tag creation
+- name: assert tag idempotency
   assert:
     that:
       - result.changed == false

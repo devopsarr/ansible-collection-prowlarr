@@ -62,8 +62,14 @@ label:
     sample: 'hd'
 '''
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.devopsarr.prowlarr.plugins.module_utils.prowlarr_module import ProwlarrModule
+from ansible.module_utils.common.text.converters import to_native
+
+try:
+    import prowlarr
+    HAS_PROWLARR_LIBRARY = True
+except ImportError:
+    HAS_PROWLARR_LIBRARY = False
 
 
 def run_module():
@@ -84,25 +90,42 @@ def run_module():
         supports_check_mode=True
     )
 
-    tags = module.api.get_tag()
+    client = prowlarr.TagApi(module.api)
 
+    # List resources.
+    try:
+        tags = client.list_tag()
+    except Exception as e:
+        module.fail_json('Error listing tags: %s' % to_native(e.reason), **result)
+
+    # Check if a resource is present already.
     for tag in tags:
         if tag['label'] == module.params['label']:
             result.update(tag)
 
-    # TODO: add error handling
+    # Create a new resource.
     if module.params['state'] == 'present' and result['id'] == 0:
         result['changed'] = True
+        # Only without check mode.
         if not module.check_mode:
-            response = module.api.create_tag(module.params['label'])
+            try:
+                response = client.create_tag(tag_resource={
+                    'label': module.params['label'],
+                })
+            except Exception as e:
+                module.fail_json('Error creating tag: %s' % to_native(e.reason), **result)
             result.update(response)
+
+    # Delete the resource.
     elif module.params['state'] == 'absent' and result['id'] != 0:
         result['changed'] = True
+        # Only without check mode.
         if not module.check_mode:
-            response = module.api.del_tag(result['id'])
+            try:
+                response = client.delete_tag(result['id'])
+            except Exception as e:
+                module.fail_json('Error deleting tag: %s' % to_native(e.reason), **result)
             result['id'] = 0
-    elif module.check_mode:
-        module.exit_json(**result)
 
     module.exit_json(**result)
 
