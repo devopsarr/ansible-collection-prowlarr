@@ -1,0 +1,58 @@
+---
+- name: Create sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile:
+    name: Example
+    enable_rss: true
+    enable_automatic_search: true
+    enable_interactive_search: false
+    minimum_seeders: 0
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert sync profile creation
+  ansible.builtin.assert:
+    that:
+      - result['enable_automatic_search'] == true
+# ----------------------------------------------------------------------------
+- name: Edit already present sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile:
+    name: Example
+    enable_rss: true
+    enable_automatic_search: true
+    enable_interactive_search: true
+    minimum_seeders: 0
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert sync profile changes
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+      - result.enable_interactive_search == true
+# ----------------------------------------------------------------------------
+- name: Create already present sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile:
+    name: Example
+    enable_rss: true
+    enable_automatic_search: true
+    enable_interactive_search: true
+    minimum_seeders: 0
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert sync profile idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Delete sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile:
+    name: Example
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+    state: absent
+  register: result
+- name: Assert sync profile deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0
