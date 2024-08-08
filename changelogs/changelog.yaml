@@ -1,1 +1,62 @@
-releases: {}
+ancestor: null
+releases:
+  1.0.0:
+    modules:
+    - description: Manages Prowlarr application.
+      name: prowlarr_application
+      namespace: ''
+    - description: Get information about Prowlarr application.
+      name: prowlarr_application_info
+      namespace: ''
+    - description: Get information about Prowlarr application schema.
+      name: prowlarr_application_schema_info
+      namespace: ''
+    - description: Manages Prowlarr download client.
+      name: prowlarr_download_client
+      namespace: ''
+    - description: Get information about Prowlarr download client.
+      name: prowlarr_download_client_info
+      namespace: ''
+    - description: Get information about Prowlarr download client schema.
+      name: prowlarr_download_client_schema_info
+      namespace: ''
+    - description: Manages Prowlarr indexer.
+      name: prowlarr_indexer
+      namespace: ''
+    - description: Get information about Prowlarr indexer.
+      name: prowlarr_indexer_info
+      namespace: ''
+    - description: Manages Prowlarr indexer proxy.
+      name: prowlarr_indexer_proxy
+      namespace: ''
+    - description: Get information about Prowlarr indexer proxy.
+      name: prowlarr_indexer_proxy_info
+      namespace: ''
+    - description: Get information about Prowlarr indexer proxy schema.
+      name: prowlarr_indexer_proxy_schema_info
+      namespace: ''
+    - description: Get information about Prowlarr indexer schema.
+      name: prowlarr_indexer_schema_info
+      namespace: ''
+    - description: Manages Prowlarr notification.
+      name: prowlarr_notification
+      namespace: ''
+    - description: Get information about Prowlarr notification.
+      name: prowlarr_notification_info
+      namespace: ''
+    - description: Get information about Prowlarr notification schema.
+      name: prowlarr_notification_schema_info
+      namespace: ''
+    - description: Manages Prowlarr sync profile.
+      name: prowlarr_sync_profile
+      namespace: ''
+    - description: Get information about Prowlarr sync profile.
+      name: prowlarr_sync_profile_info
+      namespace: ''
+    - description: Manages Prowlarr tag.
+      name: prowlarr_tag
+      namespace: ''
+    - description: Get information about Prowlarr tag.
+      name: prowlarr_tag_info
+      namespace: ''
+    release_date: '2024-08-08'
