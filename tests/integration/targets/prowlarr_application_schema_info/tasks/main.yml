@@ -1,0 +1,23 @@
+---
+- name: List a single application schema
+  devopsarr.prowlarr.prowlarr_application_schema_info:
+    name: Sonarr
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single application
+  ansible.builtin.assert:
+    that:
+      - result['applications'][0]['implementation'] == 'Sonarr'
+# ----------------------------------------------------------------------------
+- name: List all application schemas
+  devopsarr.prowlarr.prowlarr_application_schema_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple application schemas
+  ansible.builtin.assert:
+    that:
+      - result['applications'] | length > 1
