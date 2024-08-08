@@ -1,0 +1,10 @@
+---
+- name: Get info
+  devopsarr.prowlarr.prowlarr_system_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert info population
+  ansible.builtin.assert:
+    that:
+      - result['app_name'] == 'Prowlarr'
