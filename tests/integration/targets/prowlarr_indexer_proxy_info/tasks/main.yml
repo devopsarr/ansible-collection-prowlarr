@@ -1,0 +1,49 @@
+---
+- name: Create indexer proxy
+  devopsarr.prowlarr.prowlarr_indexer_proxy:
+    name: "{{ item }}"
+    config_contract: FlareSolverrSettings
+    implementation: FlareSolverr
+    fields:
+      - name: host
+        value: http://localhost:8191
+      - name: requestTimeout
+        value: 60
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1
+
+- name: List a single indexer proxy
+  devopsarr.prowlarr.prowlarr_indexer_proxy_info:
+    name: info_test
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single indexer_proxy
+  ansible.builtin.assert:
+    that:
+      - result['indexer_proxies'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: List all indexer proxies
+  devopsarr.prowlarr.prowlarr_indexer_proxy_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple indexer proxies
+  ansible.builtin.assert:
+    that:
+      - result['indexer_proxies'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up indexer proxy
+  devopsarr.prowlarr.prowlarr_indexer_proxy:
+    name: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1

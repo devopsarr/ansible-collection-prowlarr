@@ -1,0 +1,23 @@
+---
+- name: Client a single indexer proxy schema
+  devopsarr.prowlarr.prowlarr_indexer_proxy_schema_info:
+    name: FlareSolverr
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single indexer proxy schema
+  ansible.builtin.assert:
+    that:
+      - result['indexer_proxies'][0]['implementation_name'] == 'FlareSolverr'
+# ----------------------------------------------------------------------------
+- name: Client all indexer proxy schemas
+  devopsarr.prowlarr.prowlarr_indexer_proxy_schema_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple indexer proxy schemas
+  ansible.builtin.assert:
+    that:
+      - result['indexer_proxies'] | length > 1

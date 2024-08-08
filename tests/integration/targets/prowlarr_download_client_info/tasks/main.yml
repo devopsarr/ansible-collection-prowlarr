@@ -1,0 +1,63 @@
+---
+- name: Create download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: "{{ item }}"
+    fields:
+      - name: host
+        value: hadouken.lcl
+      - name: urlBase
+        value: /hadouken/
+      - name: port
+        value: 9091
+      - name: category
+        value: prowlarr-tv
+      - name: username
+        value: username
+      - name: password
+        value: password
+      - name: useSsl
+        value: false
+    protocol: torrent
+    config_contract: HadoukenSettings
+    implementation: Hadouken
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1
+
+- name: List a single download client
+  devopsarr.prowlarr.prowlarr_download_client_info:
+    name: info_test
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single download client
+  ansible.builtin.assert:
+    that:
+      - result['download_clients'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: List all download clients
+  devopsarr.prowlarr.prowlarr_download_client_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple download clients
+  ansible.builtin.assert:
+    that:
+      - result['download_clients'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    name: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1

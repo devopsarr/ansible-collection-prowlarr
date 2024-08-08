@@ -1,0 +1,47 @@
+---
+- name: Create notification
+  devopsarr.prowlarr.prowlarr_notification:
+    name: "{{ item }}"
+    config_contract: CustomScriptSettings
+    implementation: CustomScript
+    fields:
+      - name: path
+        value: /scripts/test.sh
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1
+
+- name: List a single notification
+  devopsarr.prowlarr.prowlarr_notification_info:
+    name: info_test
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single notification
+  ansible.builtin.assert:
+    that:
+      - result['notifications'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: List all notifications
+  devopsarr.prowlarr.prowlarr_notification_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple notifications
+  ansible.builtin.assert:
+    that:
+      - result['notifications'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up notification
+  devopsarr.prowlarr.prowlarr_notification:
+    name: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1

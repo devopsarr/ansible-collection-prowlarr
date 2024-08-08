@@ -1,0 +1,66 @@
+---
+- name: Create indexer proxy
+  devopsarr.prowlarr.prowlarr_indexer_proxy:
+    name: Example
+    config_contract: FlareSolverrSettings
+    implementation: FlareSolverr
+    fields:
+      - name: host
+        value: http://localhost:8191
+      - name: requestTimeout
+        value: 60
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer proxy creation
+  ansible.builtin.assert:
+    that:
+      - result['implementation'] == 'FlareSolverr'
+# ----------------------------------------------------------------------------
+- name: Edit already present indexer proxy
+  devopsarr.prowlarr.prowlarr_indexer_proxy:
+    name: Example
+    config_contract: FlareSolverrSettings
+    implementation: FlareSolverr
+    fields:
+      - name: host
+        value: http://localhost:8191
+      - name: requestTimeout
+        value: 120
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer proxy changes
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Test idempotency
+  devopsarr.prowlarr.prowlarr_indexer_proxy:
+    name: Example
+    config_contract: FlareSolverrSettings
+    implementation: FlareSolverr
+    fields:
+      - name: host
+        value: http://localhost:8191
+      - name: requestTimeout
+        value: 120
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer proxy idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Delete indexer proxy
+  devopsarr.prowlarr.prowlarr_indexer_proxy:
+    name: Example
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+    state: absent
+  register: result
+- name: Assert indexer proxy deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0

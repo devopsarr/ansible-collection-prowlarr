@@ -1,0 +1,59 @@
+---
+- name: Create application
+  devopsarr.prowlarr.prowlarr_application:
+    name: "{{ item }}"
+    sync_level: disabled
+    config_contract: RadarrSettings
+    implementation: Radarr
+    fields:
+      - name: prowlarrUrl
+        value: http://localhost:9696
+      - name: baseUrl
+        value: http://localhost:7878
+      - name: apiKey
+        value: apiKey123
+      - name: syncCategories
+        value:
+          - 2000
+          - 2010
+          - 2030
+      - name: syncRejectBlocklistedTorrentHashesWhileGrabbing
+        value: false
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1
+
+- name: List a single application
+  devopsarr.prowlarr.prowlarr_application_info:
+    name: info_test
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single application
+  ansible.builtin.assert:
+    that:
+      - result['applications'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: List all applications
+  devopsarr.prowlarr.prowlarr_application_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple applications
+  ansible.builtin.assert:
+    that:
+      - result['applications'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up application
+  devopsarr.prowlarr.prowlarr_application:
+    name: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1

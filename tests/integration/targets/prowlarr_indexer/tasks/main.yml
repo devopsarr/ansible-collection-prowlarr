@@ -1,0 +1,109 @@
+---
+- name: Create indexer
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: Example
+    enable: false
+    priority: 10
+    app_profile_id: 1
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
+    fields:
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /apilolo
+      - name: apiKey
+        value: apiKey123
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer creation
+  ansible.builtin.assert:
+    that:
+      - result['implementation'] == 'Newznab'
+# ----------------------------------------------------------------------------
+- name: Edit already present indexer
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: Example
+    enable: false
+    priority: 10
+    app_profile_id: 1
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
+    fields:
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: apiKey
+        value: apiKey123
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer changes
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Test idempotency
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: Example
+    enable: false
+    priority: 10
+    app_profile_id: 1
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
+    fields:
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: apiKey
+        value: apiKey123
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Test key change
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: Example
+    enable: false
+    priority: 10
+    app_profile_id: 1
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
+    fields:
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: apiKey
+        value: apiKey1234
+    update_secrets: true
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert indexer idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Delete indexer
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: Example
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+    state: absent
+  register: result
+- name: Assert indexer deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0

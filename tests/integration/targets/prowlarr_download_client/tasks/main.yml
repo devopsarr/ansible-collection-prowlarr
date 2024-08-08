@@ -1,0 +1,305 @@
+---
+- name: Create download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Hadouken
+    fields:
+      - name: host
+        value: hadouken.lcl
+      - name: urlBase
+        value: /hadouken/
+      - name: port
+        value: 9091
+      - name: category
+        value: prowlarr-tv
+      - name: username
+        value: username
+      - name: password
+        value: password
+      - name: useSsl
+        value: false
+    protocol: torrent
+    config_contract: HadoukenSettings
+    implementation: Hadouken
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client creation
+  ansible.builtin.assert:
+    that:
+      - result['implementation'] == 'Hadouken'
+# ----------------------------------------------------------------------------
+- name: Edit already present download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Hadouken
+    fields:
+      - name: host
+        value: hadouken.lcl
+      - name: urlBase
+        value: /hadouken/
+      - name: port
+        value: 9091
+      - name: category
+        value: prowlarr-tv
+      - name: username
+        value: username
+      - name: password
+        value: password
+      - name: useSsl
+        value: true
+    protocol: torrent
+    config_contract: HadoukenSettings
+    implementation: Hadouken
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client changes
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Test idempotency
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Hadouken
+    fields:
+      - name: host
+        value: hadouken.lcl
+      - name: urlBase
+        value: /hadouken/
+      - name: port
+        value: 9091
+      - name: category
+        value: prowlarr-tv
+      - name: username
+        value: username
+      - name: password
+        value: password
+      - name: useSsl
+        value: true
+    protocol: torrent
+    config_contract: HadoukenSettings
+    implementation: Hadouken
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Test sensitive un-change
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Hadouken
+    fields:
+      - name: host
+        value: hadouken.lcl
+      - name: urlBase
+        value: /hadouken/
+      - name: port
+        value: 9091
+      - name: category
+        value: prowlarr-tv
+      - name: username
+        value: username
+      - name: password
+        value: password123
+      - name: useSsl
+        value: true
+    protocol: torrent
+    config_contract: HadoukenSettings
+    implementation: Hadouken
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Test key change
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Hadouken
+    fields:
+      - name: host
+        value: hadouken.lcl
+      - name: urlBase
+        value: /hadouken/
+      - name: port
+        value: 9091
+      - name: category
+        value: prowlarr-tv
+      - name: username
+        value: username
+      - name: password
+        value: password123
+      - name: useSsl
+        value: true
+    protocol: torrent
+    config_contract: HadoukenSettings
+    implementation: Hadouken
+    tags: []
+    update_secrets: true
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Delete download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    name: Hadouken
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+    state: absent
+  register: result
+- name: Assert download client deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0
+# ----------------------------------------------------------------------------
+- name: Create download client with categories
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Deluge
+    categories:
+      - client_category: all
+        categories:
+          - 0
+      - client_category: some
+        categories:
+          - 1000
+          - 2000
+    fields:
+      - name: host
+        value: deluge.lcl
+      - name: urlBase
+        value: /deluge/
+      - name: port
+        value: 8112
+      - name: category
+        value: prowlarr-tv
+      - name: addPaused
+        value: false
+      - name: password
+        value: password
+      - name: useSsl
+        value: false
+    protocol: torrent
+    config_contract: DelugeSettings
+    implementation: Deluge
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client creation
+  ansible.builtin.assert:
+    that:
+      - result['implementation'] == 'Deluge'
+# ----------------------------------------------------------------------------
+- name: Edit already present download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Deluge
+    categories:
+      - client_category: all
+        categories:
+          - 0
+      - client_category: some
+        categories:
+          - 1000
+          - 3000
+    fields:
+      - name: host
+        value: deluge.lcl
+      - name: urlBase
+        value: /deluge/
+      - name: port
+        value: 8112
+      - name: category
+        value: prowlarr-tv
+      - name: addPaused
+        value: false
+      - name: password
+        value: password
+      - name: useSsl
+        value: false
+    protocol: torrent
+    config_contract: DelugeSettings
+    implementation: Deluge
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client changes
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Test idempotency
+  devopsarr.prowlarr.prowlarr_download_client:
+    enable: false
+    priority: 1
+    name: Deluge
+    categories:
+      - client_category: all
+        categories:
+          - 0
+      - client_category: some
+        categories:
+          - 1000
+          - 3000
+    fields:
+      - name: host
+        value: deluge.lcl
+      - name: urlBase
+        value: /deluge/
+      - name: port
+        value: 8112
+      - name: category
+        value: prowlarr-tv
+      - name: addPaused
+        value: false
+      - name: password
+        value: password
+      - name: useSsl
+        value: false
+    protocol: torrent
+    config_contract: DelugeSettings
+    implementation: Deluge
+    tags: []
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert download client idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Delete download client
+  devopsarr.prowlarr.prowlarr_download_client:
+    name: Deluge
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+    state: absent
+  register: result
+- name: Assert download client deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0

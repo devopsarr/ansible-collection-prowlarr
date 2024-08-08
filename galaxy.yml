@@ -1,18 +1,17 @@
 namespace: devopsarr
 name: prowlarr
-# Version will be updated by workflow
-version: 0.0.1
+version: 0.0.1 # x-release-please-version
 readme: README.md
 authors:
   - Fuochi (github.com/Fuochi)
-description: "Ansible collection for Prowlarr"
+description: 'Ansible collection for Prowlarr'
 license_file: LICENSE
 tags:
   - prowlarr
   - arr
   - indexer
 repository: https://github.com/devopsarr/ansible-collection-prowlarr
-#documentation: https://github.com/ansible-collection-migration/devopsarr.prowlarr/tree/main/docs
+documentation: https://devopsarr.github.io/ansible-doc/collections/devopsarr/prowlarr/
 homepage: https://github.com/devopsarr/ansible-collection-prowlarr
 issues: https://github.com/devopsarr/ansible-collection-prowlarr/issues
 build_ignore:

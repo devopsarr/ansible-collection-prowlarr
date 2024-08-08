@@ -1,0 +1,46 @@
+---
+- name: Create sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile:
+    name: "{{ item }}"
+    enable_rss: true
+    enable_automatic_search: true
+    enable_interactive_search: false
+    minimum_seeders: 0
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1
+
+- name: List a single sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile_info:
+    name: info_test
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single sync profile
+  ansible.builtin.assert:
+    that:
+      - result['sync_profiles'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: List all sync profiles
+  devopsarr.prowlarr.prowlarr_sync_profile_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple sync profiles
+  ansible.builtin.assert:
+    that:
+      - result['sync_profiles'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up sync profile
+  devopsarr.prowlarr.prowlarr_sync_profile:
+    name: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1

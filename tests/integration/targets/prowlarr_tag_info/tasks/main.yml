@@ -1,0 +1,42 @@
+---
+- name: Create tags
+  devopsarr.prowlarr.prowlarr_tag:
+    label: "{{ item }}"
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - first
+    - second
+
+- name: List a single tag
+  devopsarr.prowlarr.prowlarr_tag_info:
+    label: second
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single tag
+  ansible.builtin.assert:
+    that:
+      - result['tags'][0]['label'] == 'second'
+# ----------------------------------------------------------------------------
+- name: List all tags
+  devopsarr.prowlarr.prowlarr_tag_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple tags
+  ansible.builtin.assert:
+    that:
+      - result['tags'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up tags
+  devopsarr.prowlarr.prowlarr_tag:
+    label: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - first
+    - second

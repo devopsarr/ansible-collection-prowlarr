@@ -1,0 +1,23 @@
+---
+- name: Client a single download client schema
+  devopsarr.prowlarr.prowlarr_download_client_schema_info:
+    name: Deluge
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single download client schema
+  ansible.builtin.assert:
+    that:
+      - result['download_clients'][0]['implementation_name'] == 'Deluge'
+# ----------------------------------------------------------------------------
+- name: Client all download client schemas
+  devopsarr.prowlarr.prowlarr_download_client_schema_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple download client schemas
+  ansible.builtin.assert:
+    that:
+      - result['download_clients'] | length > 1
