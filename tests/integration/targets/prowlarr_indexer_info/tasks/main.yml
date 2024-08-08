@@ -1,0 +1,55 @@
+---
+- name: Create indexer
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: "{{ item }}"
+    enable: false
+    priority: 10
+    app_profile_id: 1
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
+    fields:
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /apilolo
+      - name: apiKey
+        value: apiKey123
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1
+
+- name: List a single indexer
+  devopsarr.prowlarr.prowlarr_indexer_info:
+    name: info_test
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single indexer
+  ansible.builtin.assert:
+    that:
+      - result['indexers'][0]['name'] == 'info_test'
+# ----------------------------------------------------------------------------
+- name: List all indexers
+  devopsarr.prowlarr.prowlarr_indexer_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple indexers
+  ansible.builtin.assert:
+    that:
+      - result['indexers'] | length > 1
+# ----------------------------------------------------------------------------
+- name: Clean up indexer
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: "{{ item }}"
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  with_items:
+    - info_test
+    - info_test1

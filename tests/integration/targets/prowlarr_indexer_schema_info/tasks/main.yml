@@ -1,0 +1,23 @@
+---
+- name: List a single indexer schema
+  devopsarr.prowlarr.prowlarr_indexer_schema_info:
+    name: Newznab
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single indexer
+  ansible.builtin.assert:
+    that:
+      - result['indexers'][0]['implementation'] == 'Newznab'
+# ----------------------------------------------------------------------------
+- name: List all indexer schemas
+  devopsarr.prowlarr.prowlarr_indexer_schema_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple indexer schemas
+  ansible.builtin.assert:
+    that:
+      - result['indexers'] | length > 1
