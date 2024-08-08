@@ -1,0 +1,136 @@
+---
+- name: Create notification
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    config_contract: CustomScriptSettings
+    implementation: CustomScript
+    fields:
+      - name: path
+        value: /scripts/test.sh
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert notification creation
+  ansible.builtin.assert:
+    that:
+      - result['implementation'] == 'CustomScript'
+# ----------------------------------------------------------------------------
+- name: Edit already present notification
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    on_grab: true
+    config_contract: CustomScriptSettings
+    implementation: CustomScript
+    fields:
+      - name: path
+        value: /scripts/test.sh
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert notification changes
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Test idempotency
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    on_grab: true
+    config_contract: CustomScriptSettings
+    implementation: CustomScript
+    fields:
+      - name: path
+        value: /scripts/test.sh
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert notification idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Delete notification
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+    state: absent
+  register: result
+- name: Assert notification deletion
+  ansible.builtin.assert:
+    that:
+      - result['id'] == 0
+# ----------------------------------------------------------------------------
+- name: Create another notification with sensitive values
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    config_contract: WebhookSettings
+    implementation: Webhook
+    fields:
+      - name: username
+        value: User
+      - name: password
+        value: test
+      - name: url
+        value: webhook.lcl
+      - name: method
+        value: 1
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert notification creation
+  ansible.builtin.assert:
+    that:
+      - result['implementation'] == 'Webhook'
+# ----------------------------------------------------------------------------
+- name: Test idempotency
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    config_contract: WebhookSettings
+    implementation: Webhook
+    fields:
+      - name: username
+        value: User
+      - name: password123
+        value: test
+      - name: url
+        value: webhook.lcl
+      - name: method
+        value: 1
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert notification idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == false
+# ----------------------------------------------------------------------------
+- name: Test key change
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    config_contract: WebhookSettings
+    implementation: Webhook
+    fields:
+      - name: username
+        value: User
+      - name: password123
+        value: test
+      - name: url
+        value: webhook.lcl
+      - name: method
+        value: 1
+    update_secrets: true
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert notification idempotency
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Clean up
+  devopsarr.prowlarr.prowlarr_notification:
+    name: Example
+    state: absent
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"

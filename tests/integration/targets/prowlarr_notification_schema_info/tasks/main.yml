@@ -1,0 +1,23 @@
+---
+- name: List a single notification schema
+  devopsarr.prowlarr.prowlarr_notification_schema_info:
+    name: CustomScript
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert single notification
+  ansible.builtin.assert:
+    that:
+      - result['notifications'][0]['implementation'] == 'CustomScript'
+# ----------------------------------------------------------------------------
+- name: List all notification schemas
+  devopsarr.prowlarr.prowlarr_notification_schema_info:
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+
+- name: Assert multiple notification schemas
+  ansible.builtin.assert:
+    that:
+      - result['notifications'] | length > 1
