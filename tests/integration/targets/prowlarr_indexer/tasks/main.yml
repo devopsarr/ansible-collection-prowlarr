@@ -8,6 +8,7 @@
     config_contract: NewznabSettings
     implementation: Newznab
     protocol: usenet
+    redirect: true
     fields:
       - name: baseUrl
         value: https://lolo.sickbeard.com
@@ -22,6 +23,7 @@
   ansible.builtin.assert:
     that:
       - result['implementation'] == 'Newznab'
+      - result['redirect'] == true
 # ----------------------------------------------------------------------------
 - name: Edit already present indexer
   devopsarr.prowlarr.prowlarr_indexer:
@@ -32,6 +34,7 @@
     config_contract: NewznabSettings
     implementation: Newznab
     protocol: usenet
+    redirect: true
     fields:
       - name: baseUrl
         value: https://lolo.sickbeard.com
@@ -56,6 +59,7 @@
     config_contract: NewznabSettings
     implementation: Newznab
     protocol: usenet
+    redirect: true
     fields:
       - name: baseUrl
         value: https://lolo.sickbeard.com
@@ -80,6 +84,7 @@
     config_contract: NewznabSettings
     implementation: Newznab
     protocol: usenet
+    redirect: true
     fields:
       - name: baseUrl
         value: https://lolo.sickbeard.com
@@ -95,6 +100,33 @@
   ansible.builtin.assert:
     that:
       - result.changed == true
+# ----------------------------------------------------------------------------
+- name: Test redirect change
+  devopsarr.prowlarr.prowlarr_indexer:
+    name: Example
+    enable: false
+    priority: 10
+    app_profile_id: 1
+    config_contract: NewznabSettings
+    implementation: Newznab
+    protocol: usenet
+    redirect: false
+    fields:
+      - name: baseUrl
+        value: https://lolo.sickbeard.com
+      - name: apiPath
+        value: /api
+      - name: apiKey
+        value: apiKey1234
+    update_secrets: true
+    prowlarr_api_key: "{{ prowlarr_api_key }}"
+    prowlarr_url: "{{ prowlarr_url }}"
+  register: result
+- name: Assert redirect change detected
+  ansible.builtin.assert:
+    that:
+      - result.changed == true
+      - result['redirect'] == false
 # ----------------------------------------------------------------------------
 - name: Delete indexer
   devopsarr.prowlarr.prowlarr_indexer:

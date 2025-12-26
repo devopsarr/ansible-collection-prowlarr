@@ -35,6 +35,9 @@ options:
         description: Protocol.
         choices: [ "torrent", "usenet" ]
         type: str
+    redirect:
+        description: Redirect flag.
+        type: bool
     update_secrets:
         description: Flag to force update of secret fields.
         type: bool
@@ -61,6 +64,7 @@ EXAMPLES = r'''
     config_contract: "NewznabSettings"
     implementation: "Newznab"
     protocol: "usenet"
+    redirect: true
     fields:
     - name: "baseUrl"
       value: "https://lolo.sickbeard.com"
@@ -119,6 +123,11 @@ protocol:
     returned: always
     type: str
     sample: "torrent"
+redirect:
+    description: Redirect flag.
+    returned: always
+    type: bool
+    sample: true
 tags:
     description: Tag list.
     type: list
@@ -150,6 +159,7 @@ def is_changed(status, want):
             want.config_contract != status.config_contract or
             want.implementation != status.implementation or
             want.protocol != status.protocol or
+            want.redirect != status.redirect or
             want.tags != status.tags):
         return True
 
@@ -170,6 +180,7 @@ def init_module_args():
         config_contract=dict(type='str'),
         implementation=dict(type='str'),
         protocol=dict(type='str', choices=['usenet', 'torrent']),
+        redirect=dict(type='bool'),
         tags=dict(type='list', elements='int', default=[]),
         fields=dict(type='list', elements='dict', options=field_helper.field_args),
         state=dict(default='present', type='str', choices=['present', 'absent']),
@@ -274,6 +285,7 @@ def run_module():
         config_contract=module.params['config_contract'],
         implementation=module.params['implementation'],
         protocol=module.params['protocol'],
+        redirect=module.params['redirect'],
         tags=module.params['tags'],
         fields=field_helper.populate_fields(module.params['fields']),
     )
