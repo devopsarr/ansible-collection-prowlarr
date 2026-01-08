@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/devopsarr/ansible-collection-prowlarr/compare/v1.0.0...v1.0.1) (2026-01-08)
+
+
+### Bug Fixes
+
+* Add redirect parameter support for indexers ([a3b2376](https://github.com/devopsarr/ansible-collection-prowlarr/commit/a3b2376d3e0c4aa01d015e60d34c7641b5602f64))
+
 ## [1.0.0](https://github.com/devopsarr/ansible-collection-prowlarr/compare/v0.1.0...v1.0.0) (2024-08-08)
 
 
