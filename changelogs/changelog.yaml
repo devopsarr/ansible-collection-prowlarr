@@ -60,3 +60,5 @@ releases:
       name: prowlarr_tag_info
       namespace: ''
     release_date: '2024-08-08'
+  1.0.1:
+    release_date: '2026-01-08'
